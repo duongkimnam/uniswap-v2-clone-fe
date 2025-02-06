@@ -1,0 +1,3 @@
+[submodule "v2-sdk"]
+	path = v2-sdk
+	url = https://github.com/duongkimnam/v2-sdk.git
