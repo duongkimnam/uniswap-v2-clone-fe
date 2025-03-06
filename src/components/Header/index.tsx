@@ -147,7 +147,7 @@ export default function Header() {
         <HeaderElement>
           <Title href=".">
             <UniIcon>
-              <img src={isDark ? LogoDark : Logo} alt="logo" />
+              <img className="h-10 w-10" src={isDark ? LogoDark : Logo} alt="logo" />
             </UniIcon>
             <TitleText>
               <img style={{ marginLeft: '4px', marginTop: '4px' }} src={isDark ? WordmarkDark : Wordmark} alt="logo" />
@@ -162,7 +162,7 @@ export default function Header() {
             <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
               {account && userEthBalance ? (
                 <BalanceText style={{ flexShrink: 0 }} pl="0.75rem" pr="0.5rem" fontWeight={500}>
-                  {userEthBalance?.toSignificant(4)} MATIC
+                  {userEthBalance?.toSignificant(4)} ETH
                 </BalanceText>
               ) : null}
               <Web3Status />
