@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from 'react'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { ThemeContext } from 'styled-components'
 import { Pair } from '@uniswap/sdk'
 import { Link } from 'react-router-dom'
@@ -25,6 +25,17 @@ export default function Pool() {
   const theme = useContext(ThemeContext)
   const { account } = useActiveWeb3React()
 
+  const [loading, setLoading] = useState(true)
+  const [showNoLiquidity, setShowNoLiquidity] = useState(false)
+
+   useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false)
+      setShowNoLiquidity(true)
+    }, 60000) // 60 seconds timeout
+    return () => clearTimeout(timer)
+  }, [])
+
   // fetch the user's balances of all tracked V2 LP tokens
   const trackedTokenPairs = useTrackedTokenPairs()
   const tokenPairsWithLiquidityTokens = useMemo(
@@ -39,6 +50,8 @@ export default function Pool() {
     liquidityTokens
   )
 
+  console.log('fetchingV2PairBalances', fetchingV2PairBalances)
+
   // fetch the reserves for all V2 pools in which the user has a balance
   const liquidityTokensWithBalances = useMemo(
     () =>
@@ -49,12 +62,19 @@ export default function Pool() {
   )
 
   const v2Pairs = usePairs(liquidityTokensWithBalances.map(({ tokens }) => tokens))
-  const v2IsLoading =
-    fetchingV2PairBalances || v2Pairs?.length < liquidityTokensWithBalances.length || v2Pairs?.some(V2Pair => !V2Pair)
+  // const v2IsLoading =
+  //   fetchingV2PairBalances || v2Pairs?.length < liquidityTokensWithBalances.length || v2Pairs?.some(V2Pair => !V2Pair)
 
   const allV2PairsWithLiquidity = v2Pairs.map(([, pair]) => pair).filter((v2Pair): v2Pair is Pair => Boolean(v2Pair))
 
   const hasV1Liquidity = useUserHasLiquidityInAllTokens()
+
+  useEffect(() => {
+    if (allV2PairsWithLiquidity.length > 0) {
+      setLoading(false)
+      setShowNoLiquidity(false)
+    }
+  }, [allV2PairsWithLiquidity])
 
   return (
     <>
@@ -81,7 +101,7 @@ export default function Pool() {
                   Connect to a wallet to view your liquidity.
                 </TYPE.body>
               </LightCard>
-            ) : v2IsLoading ? (
+            ) : loading ? (
               <LightCard padding="40px">
                 <TYPE.body color={theme.text3} textAlign="center">
                   <Dots>Loading</Dots>
@@ -93,13 +113,13 @@ export default function Pool() {
                   <FullPositionCard key={v2Pair.liquidityToken.address} pair={v2Pair} />
                 ))}
               </>
-            ) : (
+            ) : showNoLiquidity ? (
               <LightCard padding="40px">
                 <TYPE.body color={theme.text3} textAlign="center">
                   No liquidity found.
                 </TYPE.body>
               </LightCard>
-            )}
+            ) : null}
 
             <div>
               <Text textAlign="center" fontSize={14} style={{ padding: '.5rem 0 .5rem 0' }}>
