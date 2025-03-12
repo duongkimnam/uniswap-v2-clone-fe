@@ -126,6 +126,17 @@ const BalanceText = styled(Text)`
   `};
 `
 
+const NotificationBanner = styled.div`
+  width: 100%;
+  background-color: #ffeb3b;
+  color: black;
+  text-align: center;
+  padding: 10px;
+  font-weight: bold;
+  position: relative;
+  z-index: 2;
+`;
+
 const NETWORK_LABELS: { [chainId in ChainId]: string | null } = {
   [ChainId.MAINNET]: null,
   [ChainId.RINKEBY]: 'Rinkeby',
@@ -143,11 +154,14 @@ export default function Header() {
 
   return (
     <HeaderFrame>
+      <NotificationBanner>
+        This is the TESTNET version of ITS Swap on Sepolia ⚠️
+      </NotificationBanner>
       <RowBetween style={{ alignItems: 'flex-start' }} padding="1rem 1rem 0 1rem">
         <HeaderElement>
           <Title href=".">
             <UniIcon>
-              <img className="h-10 w-10" src={isDark ? LogoDark : Logo} alt="logo" />
+              <img src={isDark ? LogoDark : Logo} alt="logo" />
             </UniIcon>
             <TitleText>
               <img style={{ marginLeft: '4px', marginTop: '4px' }} src={isDark ? WordmarkDark : Wordmark} alt="logo" />
